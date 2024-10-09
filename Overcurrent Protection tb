@@ -4,18 +4,22 @@ module Current_Pro_tb;
     reg comp_outB;   // Comparator output from LM339N (high when overcurrent is detected) on channel B
     wire ena;        // Enable signal for Motor 1 
     wire enb;        // Enable signal for Motor 2
+    wire in1;
+    wire in3;
 
- Current_Pro UUT(clk, comp_outA, comp_outB, ena, enb);
+ Current_Pro UUT(clk, comp_outA, comp_outB, ena, enb, in1, in3);
 
     initial begin
         clk <= 0;
         comp_outA <= 1;
         comp_outB <= 1;
-        #10000;
+        #5000;
         comp_outA <= 0;
-        #10000;
+        comp_outB <= 0;
+        #5000;
         comp_outA <= 1;
-        #20000;
+        comp_outB <= 1;
+        #10000;
     end
     
     always begin
