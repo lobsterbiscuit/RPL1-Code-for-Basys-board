@@ -1,0 +1,42 @@
+`timescale 1ns / 1ps
+
+module Current_Pro(
+    input clk,              // System clock input
+    input comp_outA,        // Comparator output from LM339N (high when overcurrent is detected) on channel A
+    input comp_outB,        // Comparator output from LM339N (high when overcurrent is detected) on channel B
+    output reg ena,         // Enable signal for Motor 1 
+    output reg enb          // Enable signal for Motor 2
+);
+    // Timer variable for measuring time duration of overcurrent condition
+    reg [27:0] timec;
+    reg oc_flag;            // Flag to indicate overcurrent condition
+
+    // Initialize state on reset
+    initial begin
+        timec = 0;          // Set the timer to 0 at the start
+        oc_flag = 0;        // Clear the overcurrent flag
+        ena = 1;            // Enable Motor 1 initially
+        enb = 1;            // Enable Motor 2 initially
+    end
+
+    // Always block triggered on the rising edge of the clock
+    always @(posedge clk) begin
+        // Check if either comparator indicates overcurrent
+        if (comp_outA || comp_outB) begin
+            oc_flag <= 1;    // Set the overcurrent flag if either comparator is high
+        end
+        
+        // If an overcurrent condition has been detected
+        if (oc_flag) begin
+            timec <= timec + 1; // Increment the timer on each clock cycle
+            // Check if the timer has not exceeded the threshold (200 million clock cycles)
+            if (timec <= 200000000) begin 
+                ena <= 0;      // Disable Motor 1
+                enb <= 0;      // Disable Motor 2
+            end else begin
+                oc_flag <= 0;  // Clear the overcurrent flag after timeout
+                timec <= 0;    // Reset the timer
+            end
+        end
+    end
+endmodule
