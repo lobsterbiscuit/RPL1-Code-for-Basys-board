@@ -1,0 +1,27 @@
+module Current_Pro(
+);
+ reg clk;              // System clock input
+ reg comp_outA;        // Comparator output from LM339N (high when overcurrent is detected) on channel A
+ reg comp_outB;   // Comparator output from LM339N (high when overcurrent is detected) on channel B
+ wire ena;        // Enable signal for Motor 1 
+ wire enb;          // Enable signal for Motor 2
+
+Current_Pro_tb (clk,comp_outA,comp_outB,ena,enb
+);
+    initial begin 
+        clk <= 0;
+        comp_outA <= 1;
+        comp_outB <= 1;
+        #10000
+        comp_outA <= 0;
+        #10000
+        comp_outA <= 1;
+        #20000    
+     end
+
+always begin
+    #50 clk <= clk; // Clock goes up and down
+end 
+    
+
+endmodule
