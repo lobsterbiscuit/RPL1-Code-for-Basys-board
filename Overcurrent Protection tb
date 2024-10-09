@@ -1,4 +1,4 @@
-module Current_Pro(
+module Current_Pro_tb(
 );
  reg clk;              // System clock input
  reg comp_outA;        // Comparator output from LM339N (high when overcurrent is detected) on channel A
