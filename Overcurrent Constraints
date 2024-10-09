@@ -1,0 +1,19 @@
+## Clock Signal
+set_property PACKAGE_PIN W5 [get_ports {clk}]          # Clock pin (adjust as needed)
+set_property IOSTANDARD LVCMOS33 [get_ports {clk}]
+
+## Comparator Output A (comp_outA)
+set_property PACKAGE_PIN J1 [get_ports {comp_outA}]    # Maps to JA1 (Pmod JA pin 1)
+set_property IOSTANDARD LVCMOS33 [get_ports {comp_outA}]
+
+## Comparator Output B (comp_outB)
+set_property PACKAGE_PIN L2 [get_ports {comp_outB}]    # Maps to JA2 (Pmod JA pin 2)
+set_property IOSTANDARD LVCMOS33 [get_ports {comp_outB}]
+
+## Motor 1 Enable Signal (ena)
+set_property PACKAGE_PIN J2 [get_ports {ena}]          # Maps to JA3 (Pmod JA pin 3)
+set_property IOSTANDARD LVCMOS33 [get_ports {ena}]
+
+## Motor 2 Enable Signal (enb)
+set_property PACKAGE_PIN G2 [get_ports {enb}]          # Maps to JA4 (Pmod JA pin 4)
+set_property IOSTANDARD LVCMOS33 [get_ports {enb}]
