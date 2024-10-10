@@ -1,0 +1,26 @@
+
+module pwm_simple
+#(parameter WIDTH = 8) (  // WIDTH defines the bit size for the counter
+    input clk,
+    input res,
+    input [WIDTH-1:0] max,
+    input [WIDTH-1:0] duty,  
+    output reg pwm_out      
+);
+
+    reg [WIDTH-1:0] counter = 0;  
+
+    // PWM logic
+    always @(posedge clk) begin
+        if (res) begin
+            counter <= 0;
+            pwm_out <= 0;
+        end else begin
+            counter <= counter + 1;
+            if(counter >= max)
+                counter <= 0;  
+            pwm_out <= ~(counter < duty);
+        end
+    end
+
+endmodule
