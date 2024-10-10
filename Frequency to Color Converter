@@ -1,0 +1,25 @@
+module FrequencyToColorConverter(
+    input clk,
+    input reset,
+    input done_color,
+    input [31:0] red,
+    input [31:0] green,
+    input [31:0] blue,
+    output reg [2:0] rgb_output = 3'b000
+);
+
+    always @(posedge done_color) begin
+            // Simple comparison to find the highest frequency among red, green, and blue
+            if (red > green && red > blue) begin
+                rgb_output = 3'b001;  // Red is dominant
+            end else if (green > red && green > blue) begin
+                rgb_output = 3'b010;  // Green is dominant
+            end else if (blue > red && blue > green) begin
+                rgb_output = 3'b100;  // Blue is dominant
+            end else begin
+                rgb_output = 3'b000;  // No dominant color detected (null/blank state)
+            end
+    end
+
+endmodule
+
