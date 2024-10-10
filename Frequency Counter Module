@@ -1,0 +1,50 @@
+module freq_meas(
+    input CLK100MHZ,     // 100 MHz clock input from Basys 3 board
+    input signal_in,     // Input signal from color sensor
+    input reset,         // Reset signal
+    output reg [10:0] frequency, // Output frequency count in Hz
+    output reg done      // Signal indicating measurement is done
+);
+
+    reg [31:0] edge_count;     // Counts edges of the input signal
+    reg [31:0] time_counter;   // Counts clock cycles for the measurement period
+    reg prev_signal_in;        // Holds the previous state of signal_in for edge detection
+    reg [31:0] clk_cycles_in_test_period = 'd100000000;  // 1 second period at 100 MHz
+
+    initial begin
+        edge_count = 0;
+        time_counter = 0;
+        frequency = 0;
+        prev_signal_in = 0;  // Initialize to 0 (signal_in expected to start low)
+        done = 0;
+    end
+
+    always @(posedge CLK100MHZ or posedge reset) begin
+        if (reset) begin
+            edge_count <= 0;
+            time_counter <= 0;
+            frequency <= 0;
+            prev_signal_in <= 0;
+            done <= 0;
+        end else begin
+            time_counter <= time_counter + 1;
+
+            // Edge detection: check if signal_in transitions from 0 to 1 (rising edge)
+            if (prev_signal_in == 0 && signal_in == 1) begin
+                edge_count <= edge_count + 1;
+            end
+
+            prev_signal_in <= signal_in;
+
+            // When the time period is complete, calculate the frequency
+            if (time_counter >= clk_cycles_in_test_period) begin
+                frequency <= edge_count;  // Frequency is number of edges in the period
+                done <= 1;                // Measurement is done
+                time_counter <= 0;
+                edge_count <= 0;
+            end else begin
+                done <= 0;
+            end
+        end
+    end
+endmodule
