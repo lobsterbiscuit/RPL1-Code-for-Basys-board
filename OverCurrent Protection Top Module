@@ -53,8 +53,3 @@ module Current_Pro(
         end
     end
 endmodule
-                timec <= 0;    // Reset the timer
-            end
-        end
-    end
-endmodule
