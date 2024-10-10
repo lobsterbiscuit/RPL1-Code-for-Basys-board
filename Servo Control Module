@@ -1,0 +1,39 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 09/20/2024 02:19:31 PM
+// Design Name: 
+// Module Name: servo_control
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module servo_control(
+        input clk,
+        input res,
+        input [7:0] degree,
+        output pwm
+    );
+    
+     
+pwm_simple #(.WIDTH(21)) pwm_left_module (
+     .clk(clk),
+    .res(res),
+    .max(21'd2000000),
+    .duty(degree * 1111 + 50000),
+    .pwm_out(pwm)
+);
+
+endmodule
