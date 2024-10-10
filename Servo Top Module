@@ -1,0 +1,35 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company:
+// Engineer:
+//
+// Create Date: 09/09/2024 12:04:47 PM
+// Design Name:
+// Module Name: motortest
+// Project Name:
+// Target Devices:
+// Tool Versions:
+// Description:
+//
+// Dependencies:
+//
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// for the simple PWM , I recived help from some of the class mate. they tought me how to reference an sub module
+//I sample the seven_seg part from https://www.fpga4student.com I change the code so it only display in two of the seven seg, and only change if the switch is being operated
+//
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module pwmtest1(
+    input clk,                    // Clock
+    input res,                
+    input [7:0] switch,
+    output pwm
+);
+
+   
+servo_control s1 (.clk(clk),.res(res),.degree(switch),.pwm(pwm)); 
+
+endmodule
