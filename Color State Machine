@@ -1,0 +1,70 @@
+module ColorSensorStateMachine(
+    input clk,
+    input reset,
+    input signal_in,
+    output reg done_color =0,     
+    output reg [31:0] red = 0,
+    output reg [31:0] green = 0,
+    output reg [31:0] blue = 0,      
+    output reg S2=0,               // Control signal for RGB photodiode selection
+    output reg S3=0                // Control signal for RGB photodiode selection
+);
+    reg [1:0] color_state = 0;
+    wire done;
+    wire [31:0] frequency;
+    // Frequency measurement instance
+    freq_meas f1 (
+        .CLK100MHZ(CLK100MHZ),
+        .signal_in(signal_in),
+        .reset(reset),
+        .frequency(frequency),
+        .done(done)  // Signal to indicate measurement is done
+    );
+    
+// Define the states
+localparam BLANK_STATE = 2'b00,  // Blank state (initial state)
+           RED_STATE = 2'b01, 
+           GREEN_STATE = 2'b10, 
+           BLUE_STATE = 2'b11;
+
+// Sequential logic for the state machine
+always @(posedge done or posedge reset) begin
+    if (reset) begin
+        // Reset to the blank (idle) state
+        color_state <= BLANK_STATE;
+        S2 <= 1'b0;  // Default values for blank state
+        S3 <= 1'b0;
+    end else begin
+        // Move to the next state after frequency measurement
+        case (color_state)
+            BLANK_STATE: begin
+                // Transition from blank state to red state
+                done_color <= 0;
+                color_state <= RED_STATE;
+                S2 <= 1'b0;  // S2 and S3 values for Red state
+                S3 <= 1'b0;
+            end
+            RED_STATE: begin
+                red <= frequency;
+                color_state <= GREEN_STATE;
+                S2 <= 1'b1;  // S2 and S3 values for Green state
+                S3 <= 1'b1;
+            end
+            GREEN_STATE: begin
+                green <= frequency;
+                color_state <= BLUE_STATE;
+                S2 <= 1'b0;  // S2 and S3 values for Blue state
+                S3 <= 1'b1;
+            end
+            BLUE_STATE: begin
+                blue <= frequency;
+                done_color <= 1;
+                color_state <= BLANK_STATE;
+                S2 <= 1'b1;  // S2 and S3 values for Red state
+                S3 <= 1'b0;
+            end
+        endcase
+    end
+end
+
+endmodule
