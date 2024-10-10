@@ -1,0 +1,59 @@
+`timescale 1ns / 1ps
+
+module tb_servo_control;
+
+    // Inputs
+    reg clk;
+    reg res;
+    reg [7:0] degree;
+
+    // Outputs
+    wire pwm;
+
+    // Instantiate the Unit Under Test (UUT)
+    servo_control uut (
+        .clk(clk),
+        .res(res),
+        .degree(degree),
+        .pwm(pwm)
+    );
+
+    // Clock process
+    initial clk = 0;
+    always #5 clk = ~clk; // Clock with a period of 10ns (100MHz)
+
+    // Reset process
+    initial begin
+        res = 1; // Assert reset
+        #20 res = 0; // Deassert reset after 20ns
+        #10 res = 1; // Assert reset briefly again to ensure clean start
+        #10 res = 0; // Final deassert to start normal operation
+    end
+
+    // Test procedure
+    initial begin
+        degree = 0; // Default degree
+        #200; // Wait for system to stabilize after reset
+
+        // Test case 1: 0 degrees
+        degree = 8'd0; // Test servo at 0 degrees
+        #200000; // Allow enough time to observe PWM output
+
+        // Test case 2: Mid-point (90 degrees)
+        degree = 8'd90; // Test servo at 90 degrees
+        #200000; // Allow enough time for changes
+
+        // Test case 3: Maximum point (180 degrees)
+        degree = 8'd180; // Test servo at 180 degrees
+        #200000; // Allow enough time for changes
+
+        // Completing simulation
+        $finish;
+    end
+
+    // Optional: Monitor changes
+    initial begin
+        $monitor("At time %t, degree = %d -> pwm = %b", $time, degree, pwm);
+    end
+
+endmodule
