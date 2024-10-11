@@ -1,0 +1,51 @@
+module tb_freq_meas_optimized;
+
+    reg CLK100MHZ = 0;
+    reg signal_in = 0;
+    reg reset = 1;
+    wire [10:0] frequency;
+    wire done;
+
+    // Instantiate the frequency measurement module
+    freq_meas dut (
+        .CLK100MHZ(CLK100MHZ),
+        .signal_in(signal_in),
+        .reset(reset),
+        .frequency(frequency),
+        .done(done)
+    );
+
+    // Clock generation: 100 MHz clock
+    always #5 CLK100MHZ = ~CLK100MHZ;
+
+    // Input signal generation
+    initial begin
+        // Reset the design
+        reset = 1;
+        #50;  // Slightly longer delay to ensure proper reset
+        reset = 0;
+        
+        // Simulate a few signal transitions
+        #100 signal_in = 1;
+        #10  signal_in = 0;
+        #100 signal_in = 1;
+        #10  signal_in = 0;
+        #100 signal_in = 1;
+        #10  signal_in = 0;
+
+        // Allow simulation to run for 1 second (100 MHz clock period = 10 ns)
+        #100000000; // 1 second in 100 MHz clock cycles
+        
+        // Wait for done to go high to ensure frequency has been calculated
+        wait (done == 1);
+        #10;  // Small delay to ensure frequency is latched
+
+        // Display the final values
+        $display("Final Edge Count = %d", dut.edge_count);  
+        $display("Final Frequency = %d", frequency);  // Display final frequency value
+        $display("Done = %d", done);
+
+        $stop;
+    end
+
+endmodule
