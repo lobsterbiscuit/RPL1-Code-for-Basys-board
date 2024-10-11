@@ -37,9 +37,16 @@ module freq_meas(
             prev_signal_in <= signal_in;
 
             // When the time period is complete, calculate the frequency
-            if (time_counter >= clk_cycles_in_test_period) begin
+            if (time_counter == clk_cycles_in_test_period) begin
                 frequency <= edge_count;  // Frequency is number of edges in the period
                 done <= 1;                // Measurement is done
+                
+                // Only display final values
+                $display("Final Edge Count = %d", edge_count);
+                $display("Final Frequency = %d", frequency);
+                $display("Time Counter Reached. Done = %d", done);
+
+                // Reset time_counter and edge_count for the next period
                 time_counter <= 0;
                 edge_count <= 0;
             end else begin
