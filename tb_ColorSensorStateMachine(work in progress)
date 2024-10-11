@@ -1,0 +1,51 @@
+module tb_ColorSensorStateMachine;
+
+    reg clk = 0;
+    reg reset = 1;
+    reg signal_in = 0;
+    
+    // Outputs from the ColorSensorStateMachine
+    wire done_color;
+    wire [31:0] red, green, blue;
+    wire S2, S3;
+    wire [31:0] frequency;
+    wire done;
+    
+    // Clock generation: 100 MHz clock, toggles every 5 ns (half period for 100 MHz)
+    always #5 clk = ~clk;
+    
+    // Instantiate the ColorSensorStateMachine
+    ColorSensorStateMachine uut (
+        .clk(clk),
+        .reset(reset),
+        .signal_in(signal_in),
+        .done_color(done_color),
+        .red(red),
+        .green(green),
+        .blue(blue),
+        .S2(S2),
+        .S3(S3)
+    );
+    
+    // Initial setup
+    initial begin
+        // Hold reset for 20 ns
+        reset = 1;
+        #20;
+        reset = 0;
+
+        // Generate a frequency signal to simulate the color sensor input
+        // Simulate signal_in transitions to observe frequency behavior
+        repeat (3) begin
+            signal_in = 1;
+            #10;       // High for 10 ns
+            signal_in = 0;
+            #10;       // Low for 10 ns
+        end
+        
+        // Let the simulation run for some time to see how the state machine transitions
+        #200000;
+        $stop;
+    end
+
+endmodule
