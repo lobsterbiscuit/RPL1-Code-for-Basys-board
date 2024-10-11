@@ -1,0 +1,195 @@
+`timescale 1ns / 1ps
+
+//////////////////////////////////////////////////////////////////////////////////
+// Company:
+// Engineer:
+//
+// Create Date: 09/17/2024 12:43:10 AM
+// Design Name:
+// Module Name: finalproject
+// Project Name:
+// Target Devices:
+// Tool Versions:
+// Description:
+//
+// Dependencies:
+//
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+//
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module final_project(
+    input clk,                    // Clock
+    input start,                
+    input [2:0]psensor,
+    input signal,        
+    output reg LIN1,  
+    output reg LIN2,
+    output reg RIN1,
+    output reg RIN2,
+    output pwm_left,              // PWM output for left motor speed control
+    output pwm_right              // PWM output for right motor speed control
+    ); 
+        reg [16:0]dutycycle_left;  
+    reg [16:0]dutycycle_right;
+    pwm_simple #(.WIDTH(17)) pwm_left_module (
+        .clk(clk),
+        .start(start),
+        .duty(dutycycle_left),
+        .pwm_out(pwm_left)
+    );
+    pwm_simple #(.WIDTH(17)) pwm_right_module (
+        .clk(clk),
+        .start(start),
+        .duty(dutycycle_right),
+        .pwm_out(pwm_right)
+    );
+        always @(*) begin
+        if (!signal)
+        begin
+      case (psensor[2:0])
+            3'b101: begin
+            dutycycle_left = 17'd65536; //50% duty cycle. 
+            dutycycle_right = 17'd65536;
+            LIN1=1;
+            RIN1=1;
+            LIN2=0;
+            RIN2=0;
+            end
+            3'b000: begin
+            dutycycle_left = 17'd0;
+            dutycycle_right = 17'd0;      
+            LIN1=0;
+            RIN1=0;
+            LIN2=0;
+            RIN2=0;  
+            end
+            3'b011: begin
+            dutycycle_left = 17'd39321;   //30% duty cycle. 
+            dutycycle_right = 17'd65536;  //50% duty cycle.   
+            LIN1=1;
+            RIN1=1;
+            LIN2=0;
+            RIN2=0;    
+            end
+            3'b110: begin
+            dutycycle_left = 17'd65536;  
+            dutycycle_right = 17'd39321;  
+            LIN1=1;
+            RIN1=1;
+            LIN2=0;
+            RIN2=0;                        
+            end
+            3'b111: begin  
+            dutycycle_left = 17'd65536;  
+            dutycycle_right = 17'd65536;
+            LIN1=1;
+            RIN1=1;
+            LIN2=0;
+            RIN2=0;        
+            end
+            3'b001: begin
+            dutycycle_left = 17'd65535;  
+            dutycycle_right =17'd65535;
+            LIN1=1;
+            RIN1=1;
+            LIN2=0;
+            RIN2=0;          
+            end
+            3'b100: begin
+            dutycycle_left = 17'd65535;  
+            dutycycle_right = 17'd65535;
+            LIN1=1;
+            RIN1=1;
+            LIN2=0;
+            RIN2=0;        
+            end      
+           default :
+           begin
+            dutycycle_left = 17'd0;
+            dutycycle_right = 17'd0;
+            LIN1=0;
+            RIN1=0;
+            LIN2=0;
+            RIN2=0;            
+              end
+        endcase
+        end
+        else if(signal)
+        begin
+         case (psensor[2:0])
+           //full speed forward
+            3'b101: begin
+            dutycycle_left = 17'd131071;  // Full speed forward with the middle sensor being true
+            dutycycle_right = 17'd131071;
+            LIN1=0;
+            RIN1=0;
+            LIN2=1;
+            RIN2=1;
+            end
+            // halfspeed forward
+            3'b000: begin
+            dutycycle_left = 17'd131071;
+            dutycycle_right = 17'd131071;      
+            LIN1=0;
+            RIN1=0;
+            LIN2=1;
+            RIN2=1;
+            end
+            3'b011: begin
+            dutycycle_left = 17'd65546;
+            dutycycle_right = 17'd131071;  
+            LIN1=0;
+            RIN1=0;
+            LIN2=1;
+            RIN2=1;    
+            end
+            3'b110: begin
+            dutycycle_left = 17'd131071;  
+            dutycycle_right = 17'd65546;  
+            LIN1=0;
+            RIN1=0;
+            LIN2=1;
+            RIN2=1;                        
+            end
+            3'b001: begin
+            dutycycle_left = 17'd131071;  
+            dutycycle_right = 17'd131071;
+            LIN1=1;
+            RIN1=0;
+            LIN2=0;
+            RIN2=1;          
+            end
+            3'b100: begin
+            dutycycle_left = 17'd131071;  
+            dutycycle_right = 17'd131071;
+            LIN1=0;
+            RIN1=1;
+            LIN2=1;
+            RIN2=0;        
+            end    
+            3'b111: begin
+            dutycycle_left = 17'd131071;  
+            dutycycle_right = 17'd131071;
+            LIN1=1;
+            RIN1=1;
+            LIN2=0;
+            RIN2=0;          
+            end
+           default :
+           begin
+            dutycycle_left = 17'd0;
+            dutycycle_right = 17'd0;
+            LIN1=0;
+            RIN1=0;
+            LIN2=0;
+            RIN2=0;            
+              end
+       endcase
+        end
+        end
+   
+endmodule
