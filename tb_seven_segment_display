@@ -1,0 +1,43 @@
+module tb_seven_segment_display;
+
+    reg CLK100MHZ = 0;
+    reg [15:0] frequency = 16'b0;
+    wire [6:0] seg;        // Seven-segment display segments
+    wire [3:0] an;         // Anode signals for four digits
+
+    // Instantiate the seven-segment display module
+    seven_segment_display uut (
+        .CLK100MHZ(CLK100MHZ),
+        .frequency(frequency),
+        .seg(seg),
+        .an(an)
+    );
+
+    // Clock generation: 100 MHz clock
+    always #5 CLK100MHZ = ~CLK100MHZ;
+
+    // Apply stimulus to the frequency input
+    initial begin
+        // Initialize the frequency to zero
+        frequency = 16'd0;
+        
+        // Run simulation for a while with zero frequency
+        #200000;
+        
+        // Change frequency to a test value (e.g., 1234)
+        frequency = 16'd1234;
+        
+        // Run simulation long enough to observe all digits being displayed
+        #500000;
+        
+        // Change frequency to a higher value (e.g., 5678)
+        frequency = 16'd5678;
+        
+        // Run simulation for more time
+        #500000;
+        
+        // End simulation
+        $stop;
+    end
+
+endmodule
