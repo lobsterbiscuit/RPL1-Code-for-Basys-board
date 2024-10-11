@@ -14,7 +14,7 @@ module ColorSensorStateMachine(
     wire [31:0] frequency;
     // Frequency measurement instance
     freq_meas f1 (
-        .CLK100MHZ(CLK100MHZ),
+        .CLK100MHZ(CLK100MHZ), //2nd is clk?
         .signal_in(signal_in),
         .reset(reset),
         .frequency(frequency),
